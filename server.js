@@ -7,10 +7,14 @@ app.use(express.json());
 app.use(cors()); // habilitar CORS
 // Conexión a MySQL
 const conexion = mysql.createConnection({
-host: 'localhost',
-user: 'root',
-password: '',
-database: 'cafeteria'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME || 'defaultdb',
+  port: process.env.DB_PORT || 3306,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 conexion.connect(err => {
 if (err) {
