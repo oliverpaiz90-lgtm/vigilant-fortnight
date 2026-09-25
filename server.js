@@ -26,22 +26,27 @@ conexion.connect((err) => {
   console.log('Conectado a MySQL exitosamente');
 });
 
-// Rutas de la API
-app.get('/estudiantes', (req, res) => {
+// Ruta raíz de prueba
+app.get('/', (req, res) => {
+  res.send('API Backend de Cafetería Funcionando Correctamente');
+});
+
+// Rutas de la API con el prefijo /api
+app.get('/api/estudiantes', (req, res) => {
   conexion.query('SELECT * FROM estudiantes', (err, resultados) => {
     if (err) return res.status(500).json(err);
     res.json(resultados);
   });
 });
 
-app.get('/productos', (req, res) => {
+app.get('/api/productos', (req, res) => {
   conexion.query('SELECT * FROM productos', (err, resultados) => {
     if (err) return res.status(500).json(err);
     res.json(resultados);
   });
 });
 
-app.post('/ventas', (req, res) => {
+app.post('/api/ventas', (req, res) => {
   const { estudiante_id, producto_id, cantidad, fecha } = req.body;
   const sql = 'INSERT INTO ventas (estudiante_id, producto_id, cantidad, fecha) VALUES (?, ?, ?, ?)';
   
