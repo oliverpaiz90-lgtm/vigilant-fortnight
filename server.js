@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,27 +27,27 @@ conexion.connect((err) => {
   console.log('Conectado a MySQL exitosamente');
 });
 
-// Ruta raíz de prueba
+// Ruta raíz para verificación
 app.get('/', (req, res) => {
   res.send('API Backend de Cafetería Funcionando Correctamente');
 });
 
-// Rutas de la API con el prefijo /api
-app.get('/api/estudiantes', (req, res) => {
+// --- FUNCIONES CONTROLADORAS ---
+const obtenerEstudiantes = (req, res) => {
   conexion.query('SELECT * FROM estudiantes', (err, resultados) => {
     if (err) return res.status(500).json(err);
     res.json(resultados);
   });
-});
+};
 
-app.get('/api/productos', (req, res) => {
+const obtenerProductos = (req, res) => {
   conexion.query('SELECT * FROM productos', (err, resultados) => {
     if (err) return res.status(500).json(err);
     res.json(resultados);
   });
-});
+};
 
-app.post('/api/ventas', (req, res) => {
+const registrarVenta = (req, res) => {
   const { estudiante_id, producto_id, cantidad, fecha } = req.body;
   const sql = 'INSERT INTO ventas (estudiante_id, producto_id, cantidad, fecha) VALUES (?, ?, ?, ?)';
   
@@ -54,7 +55,17 @@ app.post('/api/ventas', (req, res) => {
     if (err) return res.status(500).json(err);
     res.send('Venta registrada con éxito');
   });
-});
+};
+
+// --- RUTAS (Mapeadas con y sin /api para compatibilidad total) ---
+app.get('/estudiantes', obtenerEstudiantes);
+app.get('/api/estudiantes', obtenerEstudiantes);
+
+app.get('/productos', obtenerProductos);
+app.get('/api/productos', obtenerProductos);
+
+app.post('/ventas', registrarVenta);
+app.post('/api/ventas', registrarVenta);
 
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
